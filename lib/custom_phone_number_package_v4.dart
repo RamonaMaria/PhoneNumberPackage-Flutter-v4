@@ -10,6 +10,7 @@ class PhoneNumber extends StatefulWidget {
   final String placeholder;
   final String message;
   final TextEditingController controller;
+  final GlobalKey<FormState> formKey;
 
   PhoneNumber(
       {this.onFieldSubmitted,
@@ -17,7 +18,8 @@ class PhoneNumber extends StatefulWidget {
         this.validator,
         this.placeholder,
         this.message,
-        this.controller});
+        this.controller,
+        this.formKey});
 
   @override
   State<StatefulWidget> createState() => _PhoneNumberState();
@@ -25,7 +27,7 @@ class PhoneNumber extends StatefulWidget {
 
 class _PhoneNumberState extends State<PhoneNumber> {
   var data = Map<String, dynamic>();
-  final formKey = GlobalKey<FormState>();
+//  final formKey = GlobalKey<FormState>();
   PhoneNumberObject _phoneNumber = new PhoneNumberObject();
 
   @override
@@ -41,7 +43,7 @@ class _PhoneNumberState extends State<PhoneNumber> {
         padding: new EdgeInsets.all(6.0),
         child: Form(
             autovalidate: false,
-            key: formKey,
+            key: widget.formKey,
             child: Center(
                 child: ListView(shrinkWrap: true, children: <Widget>[
                   Row(
@@ -64,13 +66,11 @@ class _PhoneNumberState extends State<PhoneNumber> {
                             keyboardType: TextInputType.phone,
                             controller: widget.controller,
                             validator: widget.validator,
-                            onFieldSubmitted: (String value) {
-                              if (formKey.currentState.validate()) {
-                                data['phone_number'] = value;
-                                _phoneNumber.phoneNumber = value;
-                                _phoneNumber.phoneCode = data['country_prefix'];
-                                widget.onFieldSubmitted(_phoneNumber);
-                              }
+                            onSaved: (String value) {
+                              data['phone_number'] = value;
+                              _phoneNumber.phoneNumber = value;
+                              _phoneNumber.phoneCode = data['country_prefix'];
+                              widget.onFieldSubmitted(_phoneNumber);
                             },
                           )),
                     ],
@@ -93,4 +93,3 @@ class PhoneNumberObject {
   String phoneCode;
   String phoneNumber;
 }
-
